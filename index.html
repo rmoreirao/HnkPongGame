@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pong Game</title>
+    <style>
+        /* Add some style to the game */
+        body {
+            background-color: white;
+            font-family: Arial, sanss-serif;
+            color: #008200;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center">Heineken Pong Game</h1>
+    <br>
+    <canvas id="game-canvas" width="600" height="400"></canvas>
+    <p style="text-align: center">Use the "W" and "S" keys to control the left paddle and the up and down arrow keys to control the right paddle.</p>
+    <p style="text-align: center">Move any paddle to start the game.</p>
+    <script>
+        // Set up the game canvas
+        const canvas = document.getElementById("game-canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set up the ball
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height / 2;
+        let ballRadius = 20;
+        let ballSpeedX = 5;
+        let ballSpeedY = 5;
+        var ballImage = new Image();
+        ballImage.src = "beer-jar.jpg";
+
+        // Set up the paddles
+        let paddleWidth = 90;
+        let paddleHeight = 200;
+        let paddleSpeed = 10;
+        let leftPaddleY = canvas.height / 2 - paddleHeight / 2;
+        let rightPaddleY = canvas.height / 2 - paddleHeight / 2;
+
+        // Set up the score
+        let leftScore = 0;
+        let rightScore = 0;
+
+        // Draw the ball
+        function drawBall() {
+            ctx.drawImage(ballImage, ballX - ballRadius, ballY - ballRadius, ballRadius * 2, ballRadius * 2);
+        }
+
+        // Draw the paddles
+        function drawPaddles() {
+            ctx.fillStyle = "black";
+            var img=new Image();
+            img.src="hnk-paddle.png";
+            ctx.drawImage(img, 0, leftPaddleY, paddleWidth, paddleHeight);
+            ctx.drawImage(img, canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
+        }
+
+        // Move the paddles
+        function movePaddles() {
+            if (keysPressed["w"] && leftPaddleY > 0) {
+                leftPaddleY -= paddleSpeed;
+            }
+            if (keysPressed["s"] && leftPaddleY + paddleHeight < canvas.height) {
+                leftPaddleY += paddleSpeed;
+            }
+            if (keysPressed["ArrowUp"] && rightPaddleY > 0) {
+                rightPaddleY -= paddleSpeed;
+            }
+            if (keysPressed["ArrowDown"] && rightPaddleY + paddleHeight < canvas.height) {
+                rightPaddleY += paddleSpeed;
+            }
+        }
+
+        // Check for collisions with the walls and paddles
+        function checkCollisions() {
+            // Check for collisions with the top and bottom walls
+            if (ballY - ballRadius < 0 || ballY + ballRadius > canvas.height) {
+                ballSpeedY = -ballSpeedY;
+            }
+
+            // Check for collisions with the left paddle
+            if (ballX - ballRadius < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) {
+                ballSpeedX = -ballSpeedX;
+            }
+
+            // Check for collisions with the right paddle
+            if (ballX + ballRadius > canvas.width - paddleWidth && ballY > rightPaddleY && ballY < rightPaddleY + paddleHeight) {
+                ballSpeedX = -ballSpeedX;
+            }
+
+            // Check for scoring on the left side
+            if (ballX - ballRadius < 0) {
+                rightScore++;
+                if (rightScore >= 3) {
+                    alert("Next round is on the player from the left side! Cheers");
+                    resetGame();
+                } else {
+                    resetBall();
+                }
+            }
+
+            // Check for scoring on the right side
+            if (ballX + ballRadius > canvas.width) {
+                leftScore++;
+                if (leftScore >= 3) {
+                    alert("Next round is on the player from the right side! Cheers");
+                    resetGame();
+                } else {
+                    resetBall();
+                }
+            }
+        }
+
+        // Reset the ball to the center of the screen
+        function resetBall() {
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = -ballSpeedX;
+            ballSpeedY = Math.random() * 10 - 5;
+        }
+
+        function resetGame() {
+            leftScore = 0;
+            rightScore = 0;
+            resetBall();
+        }
+
+        // Set up the keyboard controls
+        let keysPressed = {};
+        document.addEventListener("keydown", function(event) {
+            keysPressed[event.key] = true;
+        });
+        document.addEventListener("keyup", function(event) {
+            keysPressed[event.key] = false;
+        });
+
+        // Set up the game loop
+        function gameLoop() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Move the ball
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+
+            // Move the paddles
+            movePaddles();
+
+            // Check for collisions
+            checkCollisions();
+
+            // Draw the game elements
+            drawBall();
+            drawPaddles();
+            drawScore();
+
+            // Request the next frame
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Draw the score
+        function drawScore() {
+            ctx.font = "24px Arial";
+            ctx.fillText(leftScore, canvas.width / 4, 30);
+            ctx.fillText(rightScore, canvas.width * 3 / 4, 30);
+        }
+
+        // Start the game loop
+        gameLoop();
+    </script>
+</body>
+</html>
