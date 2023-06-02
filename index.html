@@ -6,13 +6,26 @@
         /* Add some style to the game */
         body {
             background-color: white;
-            font-family: Arial, sanss-serif;
-            color: #008200;
+            background-color: #007A3D;
+            color: #fff;
+            font-family: Arial, sans-serif;
         }
         canvas {
             display: block;
             margin: 0 auto;
             border: 1px solid black;
+            background-color: #fff;
+        }
+        #score {
+            text-align: center;
+            font-size: 30px;
+            margin-top: 20px;
+        }
+
+        #instructions {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -20,8 +33,14 @@
     <h1 style="text-align: center">Heineken Pong Game</h1>
     <br>
     <canvas id="game-canvas" width="600" height="400"></canvas>
-    <p style="text-align: center">Use the "W" and "S" keys to control the left paddle and the up and down arrow keys to control the right paddle.</p>
-    <p style="text-align: center">Move any paddle to start the game.</p>
+    <div id="score">0 - 0</div>
+    <div id="instructions">
+        Use the "W" and "S" keys to control the left paddle and the up and down arrow keys to control the right paddle.
+        <br/>
+        Move any paddle to start the game.
+    </div>
+    <p style="text-align: center"></p>
+    <p style="text-align: center"></p>
     <script>
         // Set up the game canvas
         const canvas = document.getElementById("game-canvas");
@@ -166,9 +185,11 @@
 
         // Draw the score
         function drawScore() {
-            ctx.font = "24px Arial";
-            ctx.fillText(leftScore, canvas.width / 4, 30);
-            ctx.fillText(rightScore, canvas.width * 3 / 4, 30);
+            // ctx.font = "24px Arial";
+            // ctx.fillText(leftScore, canvas.width / 4, 30);
+            // ctx.fillText(rightScore, canvas.width * 3 / 4, 30);
+
+            document.getElementById("score").innerHTML = leftScore + " - " + rightScore;
         }
 
         // Start the game loop
